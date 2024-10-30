@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The product that NHL won't build</title>
+    <link rel="icon" href="favi.ico" type="image/x-icon">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+            background-color: #333;
+        }
+
+        /* Navigation bar styling */
+        #navbar {
+            display: flex;
+            align-items: center;
+            background-color: #111;
+            color: white;
+            padding: 5px 10px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 20;
+        }
+
+        #navbar img {
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        #game-selector {
+            margin-left: auto;
+            padding: 5px;
+            background-color: #444;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 10px;
+            width: 100vw;
+            height: calc(100vh - 40px);
+            padding: 10px;
+            margin-top: 40px;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border: 1px solid #ccc;
+        }
+
+        .primary-button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 10;
+            background-color: white;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
+            display: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            overflow: auto;
+        }
+
+        /* Primary game layout when one is selected */
+        .iframe-container.primary {
+            grid-column: 1 / 2;
+            grid-row: 1 / 4;
+        }
+        /* Zoom and offset to hide chat when game is primary */
+        .iframe-container.primary iframe {
+            transform: scale(1.45);
+            transform-origin: top left;
+            position: relative;
+            left: -5px;
+        }
+
+
+        /* Zoom effect for 2 and 4 games */
+        .zoomed iframe {
+            overflow: auto;
+            transform: scale(1.35);
+            transform-origin: top left;
+            position: relative;
+            left: -5px;
+        }
+
+        /* Placeholder styling */
+        .placeholder {
+            margin-top: 3em;
+            display: inline-block;
+            text-align: left;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 1.2rem;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .hidden {
+            display: none;
+        }
+        h2{
+            padding-top: 35px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar with logo and game selector -->
+    <div id="navbar">
+        <img src="favi.ico" alt="NHL Watch Logo">
+        <span>NHL Watch</span>
+        <select id="game-selector" onchange="updateGameCount()">
+            <option value="0">Select Number of Games</option>
+            <option value="1">1 Game</option>
+            <option value="2">2 Games</option>
+            <option value="3">3 Games</option>
+            <option value="4">4 Games</option>
+            <option value="5">5 Games</option>
+            <option value="6">6 Games</option>
+        </select>
+    </div>
+
+    <!-- Placeholder content -->
+    <div id="placeholder" class="placeholder">
+        <h1>The product the NHL won't build</h1>
+        <br>
+        <p><b><u>I am not resposible for the distribution of NHL streams, I am simply embedding the site that does.</b></u> This site soley embeds nhl66.ir to stream multiple games at once. 
+            <br><br><br>
+            To get started, select the number of games in the top right corner. You can select up to 6 games. Within the 6 game view, you can select a "primary" game to make on big screen game with 3 secondary games on the right.
+            <br><br>
+            Your best viewing experience will be with even number of games. I've zoomed the frames to remove ads, chats, and junk from NHL66.ir to maximize hockey content.
+            <br>
+            Through the frames, <b style="color: rgb(93, 93, 255);">popups should be blocked when clicking on streams.</b> No popup blocker needed.
+        </p>
+        <h2>American Users</h2>
+        <p>You should be able to watch most games without issue. The way to know if the stream is going to work is indicated by the flag with a green check mark:</p> <img src="good.PNG">
+        <br><br>
+        <p>If the game appears with a red X, the stream will not work. This is typically for nationally broadcasted games, or games on NHL Network:</p> <img src="bad.PNG">
+        <br><br>
+        <p>Sometimes there are multiple streams to select from - between home, away, NHL network, etc. If you're seeing the red X, check the bottom to change the stream if it's available:</p> <img src="multi.png">
+        <h2>Non-American Users</h2>
+        <p>Unfortunately, you will need to leverage your own VPN connection and either connect to the US, or a European country such as the Netherlands. You will know if the stream will work from the <span style="color:chartreuse">green check</span> or <span style="color: rgb(255, 69, 69)">red x.</span></p>
+        <br>
+        <h1>To the NHL -</h1>
+        <p>If you're out there and listening, I would pay you at least $20/month for a service like this. Please get your shit together and enable your fans to enjoy your product.</p>
+    </div>
+
+    <div class="grid-container hidden" id="grid-container">
+        <div class="iframe-container sub" id="container1" style="display:none;">
+            <iframe id="iframe1" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container1')">Primary game</button>
+        </div>
+        <div class="iframe-container sub" id="container2" style="display:none;">
+            <iframe id="iframe2" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container2')">Primary game</button>
+        </div>
+        <div class="iframe-container sub" id="container3" style="display:none;">
+            <iframe id="iframe3" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container3')">Primary game</button>
+        </div>
+        <div class="iframe-container sub" id="container4" style="display:none;">
+            <iframe id="iframe4" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container4')">Primary game</button>
+        </div>
+        <div class="iframe-container sub" id="container5" style="display:none;">
+            <iframe id="iframe5" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container5')">Primary game</button>
+        </div>
+        <div class="iframe-container sub" id="container6" style="display:none;">
+            <iframe id="iframe6" src="https://nhl66.ir" sandbox="allow-same-origin allow-scripts"></iframe>
+            <button class="primary-button" onclick="setPrimaryGame('container6')">Primary game</button>
+        </div>
+    </div>
+
+    <script>
+        let currentPrimary = null;
+
+        function updateGameCount() {
+            const placeholder = document.getElementById('placeholder');
+            const gridContainer = document.getElementById('grid-container');
+            
+            // Hide placeholder and show grid container only if a valid game count is selected
+            const gameCount = parseInt(document.getElementById('game-selector').value);
+            if (gameCount > 0) {
+                placeholder.classList.add('hidden');
+                gridContainer.classList.remove('hidden');
+            } else {
+                placeholder.classList.remove('hidden');
+                gridContainer.classList.add('hidden');
+                return;  // Exit function if no games are selected
+            }
+
+            resetGrid();
+            const containers = document.querySelectorAll('.iframe-container');
+
+            containers.forEach((container, index) => {
+                container.style.display = index < gameCount ? 'block' : 'none';
+
+                // Show the primary button only if there are 6 games
+                const primaryButton = container.querySelector('.primary-button');
+                primaryButton.style.display = gameCount === 6 ? 'block' : 'none';
+            });
+
+            // Set layout based on game count
+            if (gameCount === 1) {
+                gridContainer.style.gridTemplateColumns = '1fr';
+                gridContainer.style.gridTemplateRows = '1fr';
+            } else if (gameCount === 2) {
+                gridContainer.style.gridTemplateColumns = '1fr 1fr';
+                gridContainer.style.gridTemplateRows = '1fr';
+                containers.forEach(container => container.classList.add('zoomed'));
+            } else if (gameCount === 3) {
+                gridContainer.style.gridTemplateColumns = '1fr 1fr 1fr';
+                gridContainer.style.gridTemplateRows = '1fr';
+            } else if (gameCount === 4) {
+                gridContainer.style.gridTemplateColumns = '1fr 1fr';
+                gridContainer.style.gridTemplateRows = '1fr 1fr';
+                containers.forEach(container => container.classList.add('zoomed'));
+            } else {
+                gridContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+                gridContainer.style.gridTemplateRows = 'repeat(2, 1fr)';
+            }
+        }
+
+        function setPrimaryGame(containerId) {
+            const container = document.getElementById(containerId);
+
+            if (currentPrimary === containerId) {
+                resetGrid();
+                currentPrimary = null;
+                updateGameCount();
+            } else {
+                resetGrid();
+                container.classList.add('primary');
+                container.style.display = 'block';
+
+                const containers = Array.from(document.querySelectorAll('.iframe-container'));
+                let counter = 0;
+                containers.forEach((otherContainer) => {
+                    if (otherContainer !== container && counter < 3) {
+                        otherContainer.classList.add('sub');
+                        otherContainer.style.display = 'block';
+                        counter++;
+                    } else if (otherContainer !== container) {
+                        otherContainer.style.display = 'none';
+                    }
+                });
+
+                document.getElementById('grid-container').style.gridTemplateColumns = '2fr 1fr';
+                document.getElementById('grid-container').style.gridTemplateRows = 'repeat(3, 1fr)';
+                currentPrimary = containerId;
+            }
+        }
+
+        function resetGrid() {
+            const containers = document.querySelectorAll('.iframe-container');
+            containers.forEach(container => {
+                container.classList.remove('primary', 'sub', 'zoomed');
+                container.style.display = 'none';
+            });
+        }
+    </script>
+</body>
+
+</html>
